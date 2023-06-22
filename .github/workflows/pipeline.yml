@@ -18,35 +18,43 @@ jobs:
           fetch-depth: 0
 
       - name: Alpha
-        if: ${{ github.ref == 'refs/heads/develop'}}
+        if: ${{ github.event.pull_request.base.ref }}" == "develop" }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
           PRERELEASE_SUFFIX: alpha
+          MINOR_STRING_TOKEN: "feat:"
+          PATCH_STRING_TOKEN: "fix:"
 
       - name: Beta
-        if: ${{ github.ref == 'refs/heads/beta'}}
+        if: ${{ github.event.pull_request.base.ref }}" == "beta" }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
           PRERELEASE_SUFFIX: beta
+          MINOR_STRING_TOKEN: "feat:"
+          PATCH_STRING_TOKEN: "fix:"
 
       - name: Release Candidate
-        if: ${{ github.ref == 'refs/heads/rc'}}
+        if: ${{ github.event.pull_request.base.ref }}" == "rc" }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
           PRERELEASE_SUFFIX: rc
+          MINOR_STRING_TOKEN: "feat:"
+          PATCH_STRING_TOKEN: "fix:"
 
       - name: Release
-        if: ${{ github.ref == 'refs/heads/main'}}
+        if: ${{ github.event.pull_request.base.ref }}" == "main" }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+          MINOR_STRING_TOKEN: "feat:"
+          PATCH_STRING_TOKEN: "fix:"
