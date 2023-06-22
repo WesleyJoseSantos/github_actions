@@ -3,11 +3,11 @@ name: pipeline
 on:
   push:
     branches:
-      - develop
-      - beta
-      - rc
-      - main
-
+      - "develop"
+      - "beta"
+      - "release"
+      - "main"
+      
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -36,13 +36,13 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Release Candidate
-        if: ${{ github.ref == 'refs/heads/rc' }}
+        if: ${{ github.event.pull_request.base.ref == 'release' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
-          PRERELEASE_SUFFIX: rc
+          PRERELEASE_SUFFIX: release
 
       - name: Release
         if: ${{ github.ref == 'refs/heads/main' }}
