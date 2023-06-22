@@ -36,7 +36,7 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Release Candidate
-        if: ${{ github.event.pull_request.base.ref == 'release' }}
+        if: ${{ github.ref == 'release' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
