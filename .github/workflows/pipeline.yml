@@ -8,7 +8,7 @@ on:
       - "main"
       
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,7 +16,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Alpha
+      - name: Set pre-release envs
+        if: ${{ github.ref == 'refs/heads/release' }}
+        run: |
+          echo "RELEASE_KIND=pre-release" >> $GITHUB_ENV
+          echo "TAG_KIND=-pre" >> $GITHUB_ENV
+
+      - name: Set release envs
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          echo "RELEASE_KIND=release" >> $GITHUB_ENV
+          echo "TAG_KIND=" >> $GITHUB_ENV
+
+      - name: Create Alpha TAG
         if: ${{ github.ref == 'refs/heads/develop' }}
         uses: anothrNick/github-tag-action@v1
         env:
@@ -25,7 +37,8 @@ jobs:
           PRERELEASE: true
           PRERELEASE_SUFFIX: alpha
 
-      - name: Beta
+      - name: Create Beta TAG
+        id: beta_tag
         if: ${{ github.ref == 'refs/heads/release' }}
         uses: anothrNick/github-tag-action@v1
         env:
@@ -34,9 +47,28 @@ jobs:
           PRERELEASE: true
           PRERELEASE_SUFFIX: beta
 
-      - name: Release
+      - name: Create Stable TAG
+        id: release_tag
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+
+      - name: Create Beta Release
+        if: ${{ github.ref == 'refs/heads/release' }}
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          body_path: ${{ github.workspace }}/CHANGES.md
+          name: ${{ env.RELEASE_KIND }} ${{ steps.beta_tag.outputs.new_tag }}-beta
+          tag_name: ${{ steps.beta_tag.outputs.new_tag }}-beta
+      
+      - name: Create Stable Release
+        if: ${{ github.ref == 'refs/heads/release' }}
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: false
+          body_path: ${{ github.workspace }}/CHANGES.md
+          name: ${{ env.RELEASE_KIND }} ${{ steps.release_tag.outputs.new_tag }}
+          tag_name: ${{ steps.release_tag.outputs.new_tag }}
