@@ -5,7 +5,7 @@ on:
     branches:
       - "develop"
       - "beta"
-      - "rc"
+      - "release"
       - "main"
 
 jobs:
@@ -36,13 +36,13 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Release Candidate
-        if: ${{ github.event.pull_request.base.ref == 'rc' }}
+        if: ${{ github.event.pull_request.base.ref == 'release' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
-          PRERELEASE_SUFFIX: rc
+          PRERELEASE_SUFFIX: release
 
       - name: Release
         if: ${{ github.event.pull_request.base.ref == 'main' }}
