@@ -8,7 +8,7 @@ on:
       - "main"
       
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,27 +16,41 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Alpha
+      - name: Set alpha env
         if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          PRERELEASE: true
-          PRERELEASE_SUFFIX: alpha
+        run: |
+          echo "RELEASE_PRE=true" >> $GITHUB_ENV
+          echo "RELEASE_SUFFIX=alpha" >> $GITHUB_ENV
 
-      - name: Beta
+      - name: Set pre-release env
         if: ${{ github.ref == 'refs/heads/release' }}
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          PRERELEASE: true
-          PRERELEASE_SUFFIX: beta
+        run: |
+          echo "RELEASE_PRE=true" >> $GITHUB_ENV
+          echo "RELEASE_SUFFIX=beta" >> $GITHUB_ENV
+          echo "RELEASE_KIND=pre-release" >> $GITHUB_ENV
 
-      - name: Release
+      - name: Set release env
         if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          echo "RELEASE_PRE=false" >> $GITHUB_ENV
+          echo "RELEASE_SUFFIX=beta" >> $GITHUB_ENV
+          echo "RELEASE_KIND=release" >> $GITHUB_ENV
+
+      - name: Create TAG
+        id: tag
+        if: ${{ github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release' || github.ref == 'refs/heads/main' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+          PRERELEASE: ${{ env.RELEASE_PRE }}
+          PRERELEASE_SUFFIX: ${{ env.RELEASE_SUFFIX }}
+
+      - name: Create Release
+        if: ${{ github.ref == 'refs/heads/release' ||  github.ref == 'refs/heads/main'}}
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: true
+          body_path: ${{ github.workspace }}/CHANGES.md
+          name: ${{ env.RELEASE_KIND }} ${{ steps.tag.outputs.new_tag }}
+          tag_name: ${{ steps.tag.outputs.new_tag }}
