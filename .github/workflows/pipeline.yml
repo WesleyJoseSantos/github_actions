@@ -29,7 +29,6 @@ jobs:
           echo "TAG_KIND=" >> $GITHUB_ENV
 
       - name: Create Alpha TAG
-        id: create_tag
         if: ${{ github.ref == 'refs/heads/develop' }}
         uses: anothrNick/github-tag-action@v1
         env:
@@ -39,7 +38,7 @@ jobs:
           PRERELEASE_SUFFIX: alpha
 
       - name: Create Beta TAG
-        id: create_tag
+        id: beta_tag
         if: ${{ github.ref == 'refs/heads/release' }}
         uses: anothrNick/github-tag-action@v1
         env:
@@ -49,7 +48,7 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Create Stable TAG
-        id: create_tag
+        id: release_tag
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: anothrNick/github-tag-action@v1
         env:
@@ -62,8 +61,8 @@ jobs:
         with:
           prerelease: true
           body_path: ${{ github.workspace }}/CHANGES.md
-          name: ${{ env.RELEASE_KIND }} ${{ steps.create_tag.outputs.new_tag }}-beta
-          tag_name: ${{ steps.create_tag.outputs.new_tag }}-beta
+          name: ${{ env.RELEASE_KIND }} ${{ steps.beta_tag.outputs.new_tag }}-beta
+          tag_name: ${{ steps.beta_tag.outputs.new_tag }}-beta
       
       - name: Create Stable Release
         if: ${{ github.ref == 'refs/heads/release' }}
@@ -71,5 +70,5 @@ jobs:
         with:
           prerelease: false
           body_path: ${{ github.workspace }}/CHANGES.md
-          name: ${{ env.RELEASE_KIND }} ${{ steps.create_tag.outputs.new_tag }}
-          tag_name: ${{ steps.create_tag.outputs.new_tag }}
+          name: ${{ env.RELEASE_KIND }} ${{ steps.release_tag.outputs.new_tag }}
+          tag_name: ${{ steps.release_tag.outputs.new_tag }}
