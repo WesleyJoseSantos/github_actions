@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Alpha
-        if: ${{ github.ref == 'refs/heads/develop'}}
+        if: ${{ github.event.pull_request.base.ref == 'develop' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
           PRERELEASE_SUFFIX: alpha
 
       - name: Beta
-        if: ${{ github.ref == 'refs/heads/beta'}}
+        if: ${{ github.event.pull_request.base.ref == 'beta' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,7 +36,7 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Release Candidate
-        if: ${{ github.ref == 'refs/heads/rc'}}
+        if: ${{ github.event.pull_request.base.ref == 'rc' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
           PRERELEASE_SUFFIX: rc
 
       - name: Release
-        if: ${{ github.ref == 'refs/heads/main'}}
+        if: ${{ github.event.pull_request.base.ref == 'main' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
