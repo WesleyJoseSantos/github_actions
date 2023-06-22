@@ -1,0 +1,52 @@
+name: pipeline
+
+on:
+  pull_request:
+    branches:
+      - "develop"
+      - "beta"
+      - "rc"
+      - "main"
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Alpha
+        if: ${{ github.ref == 'refs/heads/develop'}}
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          PRERELEASE: true
+          PRERELEASE_SUFFIX: alpha
+
+      - name: Beta
+        if: ${{ github.ref == 'refs/heads/beta'}}
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          PRERELEASE: true
+          PRERELEASE_SUFFIX: beta
+
+      - name: Release Candidate
+        if: ${{ github.ref == 'refs/heads/rc'}}
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          PRERELEASE: true
+          PRERELEASE_SUFFIX: rc
+
+      - name: Release
+        if: ${{ github.ref == 'refs/heads/main'}}
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
