@@ -4,3 +4,6 @@
 
 ### Added
  - Create release on github for 'release' and 'main' branches
+
+### Changed
+ - Merge Create TAGs steps
