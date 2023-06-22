@@ -1,12 +1,12 @@
 name: pipeline
 
 on:
-  pull_request:
+  push:
     branches:
-      - "develop"
-      - "beta"
-      - "rc"
-      - "main"
+      - develop
+      - beta
+      - rc
+      - main
 
 jobs:
   tag:
@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Alpha
-        if: ${{ github.event.pull_request.base.ref == 'develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
           PRERELEASE_SUFFIX: alpha
 
       - name: Beta
-        if: ${{ github.event.pull_request.base.ref == 'beta' }}
+        if: ${{ github.ref == 'refs/heads/beta' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,7 +36,7 @@ jobs:
           PRERELEASE_SUFFIX: beta
 
       - name: Release Candidate
-        if: ${{ github.event.pull_request.base.ref == 'rc' }}
+        if: ${{ github.ref == 'refs/heads/rc' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
           PRERELEASE_SUFFIX: rc
 
       - name: Release
-        if: ${{ github.event.pull_request.base.ref == 'main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
