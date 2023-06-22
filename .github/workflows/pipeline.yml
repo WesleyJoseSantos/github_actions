@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Alpha
-        if: ${{ github.event.pull_request.base.ref }}" == "develop" }}
+        if: [[ "${{ github.event.pull_request.base.ref }}" == "develop" ]]; then
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -29,32 +29,26 @@ jobs:
           PATCH_STRING_TOKEN: "fix:"
 
       - name: Beta
-        if: ${{ github.event.pull_request.base.ref }}" == "beta" }}
+        if: [[ "${{ github.event.pull_request.base.ref }}" == "beta" ]]; then
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
           PRERELEASE_SUFFIX: beta
-          MINOR_STRING_TOKEN: "feat:"
-          PATCH_STRING_TOKEN: "fix:"
 
       - name: Release Candidate
-        if: ${{ github.event.pull_request.base.ref }}" == "rc" }}
+        if: [[ "${{ github.event.pull_request.base.ref }}" == "rc" ]]; then
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           PRERELEASE: true
           PRERELEASE_SUFFIX: rc
-          MINOR_STRING_TOKEN: "feat:"
-          PATCH_STRING_TOKEN: "fix:"
 
       - name: Release
-        if: ${{ github.event.pull_request.base.ref }}" == "main" }}
+        if: [[ "${{ github.event.pull_request.base.ref }}" == "release" ]]; then
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          MINOR_STRING_TOKEN: "feat:"
-          PATCH_STRING_TOKEN: "fix:"
